@@ -1,0 +1,22 @@
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, user-scalable=no"> 
+		<link rel="stylesheet" type="text/css" href="css/app.css" />
+	</head>
+	<body>
+		<script src="js/createjs-2015.05.21.min.js"></script>
+		<script src="js/app.js"></script>
+		<script src="/popup/popup.js"></script>
+		<script>
+			let popup = new Popup({
+				heading: `Dangerous To Fish`,
+				body: `A project written to learn HTML5 canvas when it came out, using createjs.
+
+					Lots of maths, specifically sine waves in the water, fish movements, hearts, and bubbles.
+
+					Basically a one-tap game (what I refer to as a bus-stop game - like flappybird).  Tap the screen to jump out of the water.  The more animals you pass, the more points you get!`,
+				button: `Go swimming!`
+			});
+		</script>
+	</body>
+</html>
