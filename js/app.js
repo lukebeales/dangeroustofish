@@ -640,6 +640,8 @@ NoClickDelay.prototype = {
 				if ( fishOutOfWater === false ) {
 					// we're jumping out
 					soundPlay('splash2');
+					// Compensate center so fish.y stays continuous as fishMultiply changes 1→2
+					fishCircle["y"] -= Math.round(Math.sin(((Math.PI * 2) / 80) * fishCircle["s"]) * fishCircle["r"]);
 				}
 
 				fishOutOfWater = true;
@@ -649,6 +651,8 @@ NoClickDelay.prototype = {
 				if ( fishOutOfWater === true ) {
 					// we're landing
 					soundPlay('splash');
+					// Compensate center so fish.y stays continuous as fishMultiply changes 2→1
+					fishCircle["y"] += Math.round(Math.sin(((Math.PI * 2) / 80) * fishCircle["s"]) * fishCircle["r"]);
 				}
 
 				fishOutOfWater = false;
@@ -707,7 +711,7 @@ NoClickDelay.prototype = {
 
 			if ( fishCircle["s"] >= 80 ) {
 				fishCircle["s"] = 0;
-			} else if ( fishCircle["s"] == "20" ) {
+			} else if ( fishCircle["s"] === 20 ) {
 				fishMultiply = 1;
 			}
 
