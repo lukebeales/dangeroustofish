@@ -15,8 +15,8 @@ var fishOutOfWater = true;
 var fishAir = 100;
 var fishWater = 100;
 
-var stages = new Array("splash", "help1", "help2", "play", "dead");
-var stage = 0;
+var nextStage = { splash: 'help1', help1: 'help2', help2: 'play', play: 'dead' };
+var stage = 'splash';
 
 var score = 0;
 
@@ -219,29 +219,29 @@ NoClickDelay.prototype = {
 		for ( i = 0, ilen = bubbles.length; i < ilen; i++ ) {
 
 			// draw a circle to represent the fish for now
-			bubbles[i]["size"] = Math.round(Math.random()*8);
+			bubbles[i].size = Math.round(Math.random()*8);
 
-			bubbles[i]["obj"] = new createjs.Shape();
-			bubbles[i]["obj"].graphics.setStrokeStyle(2,"round").beginStroke("#FFFFFF").drawCircle(0, 0, bubbles[i]["size"]);
-			bubbles[i]["obj"].x = -50;
-			bubbles[i]["obj"].y = -50;
-			bubbles[i]["obj"].alpha = 0.75;
+			bubbles[i].obj = new createjs.Shape();
+			bubbles[i].obj.graphics.setStrokeStyle(2,"round").beginStroke("#FFFFFF").drawCircle(0, 0, bubbles[i].size);
+			bubbles[i].obj.x = -50;
+			bubbles[i].obj.y = -50;
+			bubbles[i].obj.alpha = 0.75;
 
-			globalStage.addChild(bubbles[i]["obj"]);
+			globalStage.addChild(bubbles[i].obj);
 	
 		}
 	}
 
 	
 	function fishInit() {
-		fishCircle["x"] = globalWidth / 3;
-		fishCircle["y"] = -100;
-		fishCircle["r"] = globalHeight - (globalWaterDepth / 2);
-		fishCircle["s"] = 75;
+		fishCircle.x = globalWidth / 3;
+		fishCircle.y = -100;
+		fishCircle.r = globalHeight - (globalWaterDepth / 2);
+		fishCircle.s = 75;
 
 		fish = new createjs.Bitmap("img/mullet.png");
-		fish.x = fishCircle["x"];
-		fish.y = fishCircle["y"];
+		fish.x = fishCircle.x;
+		fish.y = fishCircle.y;
 		fish.regX = 60;
 		fish.regY = 42;
 		fish.rotation = 0;
@@ -254,28 +254,28 @@ NoClickDelay.prototype = {
 		var i;
 		for ( i = 0; i < obstacles.length; i++ ) {
 
-			if ( obstacles[i]["type"] == 'swim' ) {
-				obstacles[i]["obj"] = new createjs.Bitmap("img/shark.png");
-				obstacles[i]["obj"].rotation = 0;
-				obstacles[i]["obj"].regX = 60;
-				obstacles[i]["obj"].regY = 60;
-			} else if ( obstacles[i]["type"] == 'float' ) {
-				obstacles[i]["obj"] = new createjs.Bitmap("img/duck.png");
-				obstacles[i]["obj"].rotation = 0;
-				obstacles[i]["obj"].regX = 40;
-				obstacles[i]["obj"].regY = 60;
-			} else if ( obstacles[i]["type"] == 'fly' ) {
-				obstacles[i]["obj"] = new createjs.Bitmap("img/pelican.png");
-				obstacles[i]["obj"].rotation = 0;
-				obstacles[i]["obj"].regX = 40;
-				obstacles[i]["obj"].regY = 30;
+			if ( obstacles[i].type == 'swim' ) {
+				obstacles[i].obj = new createjs.Bitmap("img/shark.png");
+				obstacles[i].obj.rotation = 0;
+				obstacles[i].obj.regX = 60;
+				obstacles[i].obj.regY = 60;
+			} else if ( obstacles[i].type == 'float' ) {
+				obstacles[i].obj = new createjs.Bitmap("img/duck.png");
+				obstacles[i].obj.rotation = 0;
+				obstacles[i].obj.regX = 40;
+				obstacles[i].obj.regY = 60;
+			} else if ( obstacles[i].type == 'fly' ) {
+				obstacles[i].obj = new createjs.Bitmap("img/pelican.png");
+				obstacles[i].obj.rotation = 0;
+				obstacles[i].obj.regX = 40;
+				obstacles[i].obj.regY = 30;
 			}
 
-			obstacles[i]["obj"].x = 0 - globalWidth;
-			obstacles[i]["obj"].y = 0;
-			// obstacles[i]["obj"].alpha = 1;
+			obstacles[i].obj.x = 0 - globalWidth;
+			obstacles[i].obj.y = 0;
+			// obstacles[i].obj.alpha = 1;
 
-			globalStage.addChild(obstacles[i]["obj"]);
+			globalStage.addChild(obstacles[i].obj);
 	
 		}
 	}
@@ -284,14 +284,14 @@ NoClickDelay.prototype = {
 	function healthInit() {
 		var i;
 		for ( i = 0; i < 5; i++ ) {
-			health[i]["obj"] = new createjs.Bitmap("img/heart.png");
-			health[i]["x"] = 120 + (i * 50);
-			health[i]["y"] = 32;
-			health[i]["v"] = true;
-			health[i]["obj"].x = health[i]["x"];
-			health[i]["obj"].y = health[i]["y"];
+			health[i].obj = new createjs.Bitmap("img/heart.png");
+			health[i].x = 120 + (i * 50);
+			health[i].y = 32;
+			health[i].v = true;
+			health[i].obj.x = health[i].x;
+			health[i].obj.y = health[i].y;
 
-			globalStage.addChild(health[i]["obj"]);
+			globalStage.addChild(health[i].obj);
 		}
 	}
 
@@ -301,7 +301,7 @@ NoClickDelay.prototype = {
 
 /*
 	Cocoon.Ad.banner.on("ready" , function(){
-		if ( stages[stage] != 'dead' ) {
+		if ( stage != 'dead' ) {
 			adHide();
 		} else {
 			Cocoon.Ad.setBannerLayout(Cocoon.Ad.BannerLayout.TOP_CENTER);
@@ -332,7 +332,7 @@ NoClickDelay.prototype = {
 		bubbleUpdate();
 		textUpdate();
 
-		if ( stages[stage] != 'splash' ) {
+		if ( stage != 'splash' ) {
 			obstacleUpdate();
 			fishUpdate();
 			healthUpdate();
@@ -420,16 +420,16 @@ NoClickDelay.prototype = {
 
 
 	function textUpdate() {
-		if ( stages[stage] == 'splash' ) {
+		if ( stage == 'splash' ) {
 			textOutline.text = 'DaNGeRouS\nTo\nFiSH!';
 			text.text = 'DaNGeRouS\nTo\nFiSH!';
-		} else if ( stages[stage] == 'help1' ) {
+		} else if ( stage == 'help1' ) {
 			textOutline.text = 'tap to swim,\njump and\navoid obstacles!';
 			text.text = 'tap to swim,\njump and\navoid obstacles!';
-		} else if ( stages[stage] == 'help2' ) {
+		} else if ( stage == 'help2' ) {
 			textOutline.text = 'swap between\nair and water\nto survive!';
 			text.text = 'swap between\nair and water\nto survive!';
-		} else if ( stages[stage] == 'play' ) {
+		} else if ( stage == 'play' ) {
 			if ( ( -100 + fishAir + fishWater ) < 50 ) {
 				textOutline.text = 'hurry!\n' + score;
 				text.text = 'hurry!\n' + score;
@@ -450,19 +450,19 @@ NoClickDelay.prototype = {
 			var i;
 			var ilen;
 			for ( i = 0, ilen = bubbles.length; i < ilen; i++ ) {
-				if ( bubbles[i]["v"] === false ) {
-					if ( ( stages[stage] != "splash" ) && ( stages[stage] != "dead" ) && ( Math.random()*100 > 50 ) && ( fishOutOfWater === false ) ) {
+				if ( bubbles[i].v === false ) {
+					if ( ( stage != "splash" ) && ( stage != "dead" ) && ( Math.random()*100 > 50 ) && ( fishOutOfWater === false ) ) {
 						soundPlay('bubble' + (Math.floor(Math.random()*2) + 1));
 
-						bubbles[i]["type"] = 'fish';
-						bubbles[i]["x"] = fish.x + 50;
-						bubbles[i]["y"] = fish.y;
+						bubbles[i].type = 'fish';
+						bubbles[i].x = fish.x + 50;
+						bubbles[i].y = fish.y;
 					} else {
-						bubbles[i]["type"] = 'ocean';
-						bubbles[i]["x"] = globalWidth + 20;
-						bubbles[i]["y"] = globalHeight - (Math.random() * (globalWaterDepth - globalWaveHeight));
+						bubbles[i].type = 'ocean';
+						bubbles[i].x = globalWidth + 20;
+						bubbles[i].y = globalHeight - (Math.random() * (globalWaterDepth - globalWaveHeight));
 					}
-					bubbles[i]["v"] = true;
+					bubbles[i].v = true;
 					break;
 				}
 			}
@@ -472,34 +472,34 @@ NoClickDelay.prototype = {
 		var i;
 		var ilen;
 		for ( i = 0, ilen = bubbles.length; i < ilen; i++ ) {
-			if ( bubbles[i]["v"] !== false ) {
+			if ( bubbles[i].v !== false ) {
 
-				if ( bubbles[i]["type"] == "fish" ) {
-					bubbles[i]["y"] -= 6;
-					bubbles[i]["x"] -= 6;
+				if ( bubbles[i].type == "fish" ) {
+					bubbles[i].y -= 6;
+					bubbles[i].x -= 6;
 				} else {
-					bubbles[i]["x"] -= (3 + (bubbles[i]["size"] / 2));
+					bubbles[i].x -= (3 + (bubbles[i].size / 2));
 				}
 
-				if ( bubbles[i]["x"] <= -20 ) {
-					bubbles[i]["x"] = -50;
-					bubbles[i]["y"] = -50;
-					bubbles[i]["v"] = false;
-				} else if ( bubbles[i]["y"] <= globalHeight - waterDepth(bubbles[i]["x"]) ) {
+				if ( bubbles[i].x <= -20 ) {
+					bubbles[i].x = -50;
+					bubbles[i].y = -50;
+					bubbles[i].v = false;
+				} else if ( bubbles[i].y <= globalHeight - waterDepth(bubbles[i].x) ) {
 					// pop bubble here
 					// soundPlay('pop');
-					bubbles[i]["x"] = -50;
-					bubbles[i]["y"] = -50;
-					bubbles[i]["v"] = false;
+					bubbles[i].x = -50;
+					bubbles[i].y = -50;
+					bubbles[i].v = false;
 				}
 
 
-				if ( bubbles[i]["type"] == "fish" ) {
-					bubbles[i]["obj"].x = bubbles[i]["x"] + ( Math.sin(bubbles[i]["y"] / 10) * 4 );
-					bubbles[i]["obj"].y = bubbles[i]["y"];
+				if ( bubbles[i].type == "fish" ) {
+					bubbles[i].obj.x = bubbles[i].x + ( Math.sin(bubbles[i].y / 10) * 4 );
+					bubbles[i].obj.y = bubbles[i].y;
 				} else {
-					bubbles[i]["obj"].x = bubbles[i]["x"]
-					bubbles[i]["obj"].y = bubbles[i]["y"] + ( Math.sin(bubbles[i]["x"] / 20) * 2 );
+					bubbles[i].obj.x = bubbles[i].x
+					bubbles[i].obj.y = bubbles[i].y + ( Math.sin(bubbles[i].x / 20) * 2 );
 				}
 			}
 		}
@@ -514,20 +514,20 @@ NoClickDelay.prototype = {
 		}
 
 		// if we choose to do an obstacle (while in play mode)
-		if ( ( stages[stage] == "play" ) && ( obstacleStep == 0 ) ) {
+		if ( ( stage == "play" ) && ( obstacleStep == 0 ) ) {
 			var i;
 			var j = 0;
 			while ( j < 100 ) {
 				i = Math.round(Math.random()*obstacles.length);
-				if ( obstacles[i]["v"] === false ) {
-					if ( obstacles[i]["type"] == "swim" ) {
-						obstacles[i]["y"] = globalHeight - Math.round(Math.random() * ((globalWaterDepth * 0.9) - (globalWaveHeight / 2)));
-					} else if ( obstacles[i]["type"] == "fly" ) {
-						obstacles[i]["y"] = Math.round(Math.random() * ((globalHeight - globalWaterDepth - ( globalWaveHeight / 2 )) * 0.8));
+				if ( obstacles[i].v === false ) {
+					if ( obstacles[i].type == "swim" ) {
+						obstacles[i].y = globalHeight - Math.round(Math.random() * ((globalWaterDepth * 0.9) - (globalWaveHeight / 2)));
+					} else if ( obstacles[i].type == "fly" ) {
+						obstacles[i].y = Math.round(Math.random() * ((globalHeight - globalWaterDepth - ( globalWaveHeight / 2 )) * 0.8));
 					}
-					obstacles[i]["x"] = globalWidth + 50;
-					obstacles[i]["v"] = true;
-					obstacles[i]["s"] = false;
+					obstacles[i].x = globalWidth + 50;
+					obstacles[i].v = true;
+					obstacles[i].s = false;
 
 					break;
 				} else {
@@ -540,35 +540,35 @@ NoClickDelay.prototype = {
 		var i;
 		var ilen;
 		for ( i = 0, ilen = obstacles.length; i < ilen; i++ ) {
-			if ( obstacles[i]["v"] !== false ) {
+			if ( obstacles[i].v !== false ) {
 
-				if ( obstacles[i]["type"] == "fly" ) {
-					obstacles[i]["x"] -= 6;
-				} else if ( obstacles[i]["type"] == "swim" ) {
-					obstacles[i]["x"] -= 10;
+				if ( obstacles[i].type == "fly" ) {
+					obstacles[i].x -= 6;
+				} else if ( obstacles[i].type == "swim" ) {
+					obstacles[i].x -= 10;
 				} else {
-					obstacles[i]["x"] -= 8;
+					obstacles[i].x -= 8;
 				}
 
-				if ( obstacles[i]["x"] <= -150 ) {
-					obstacles[i]["x"] = 0 - globalWidth;
-					obstacles[i]["y"] = 0;
-					obstacles[i]["v"] = false;
+				if ( obstacles[i].x <= -150 ) {
+					obstacles[i].x = 0 - globalWidth;
+					obstacles[i].y = 0;
+					obstacles[i].v = false;
 				}
 
-				obstacles[i]["obj"].x = obstacles[i]["x"];
+				obstacles[i].obj.x = obstacles[i].x;
 
-				if ( obstacles[i]["type"] == "fly" ) {
-					obstacles[i]["obj"].y = obstacles[i]["y"] + ( Math.sin(obstacles[i]["x"] / 60) * 10 );
-				} else if ( obstacles[i]["type"] == "float" ) {
-					obstacles[i]["y"] = globalHeight - waterDepth(obstacles[i]["x"]);
-					obstacles[i]["obj"].y = obstacles[i]["y"] + ( Math.sin(obstacles[i]["x"] / 40) * 15 );
+				if ( obstacles[i].type == "fly" ) {
+					obstacles[i].obj.y = obstacles[i].y + ( Math.sin(obstacles[i].x / 60) * 10 );
+				} else if ( obstacles[i].type == "float" ) {
+					obstacles[i].y = globalHeight - waterDepth(obstacles[i].x);
+					obstacles[i].obj.y = obstacles[i].y + ( Math.sin(obstacles[i].x / 40) * 15 );
 				} else {
-					obstacles[i]["obj"].y = obstacles[i]["y"] + ( Math.sin(obstacles[i]["x"] / 60) * 10 );
+					obstacles[i].obj.y = obstacles[i].y + ( Math.sin(obstacles[i].x / 60) * 10 );
 				}
 
 				// check if we have hit something
-				if ( ( stages[stage] == "play" ) && ( fish.x > obstacles[i]["obj"].x - 40 ) && ( fish.x < obstacles[i]["obj"].x + 40 ) && ( fish.y > obstacles[i]["obj"].y - 30 ) && ( fish.y < obstacles[i]["obj"].y + 30 ) ) {
+				if ( ( stage == "play" ) && ( fish.x > obstacles[i].obj.x - 40 ) && ( fish.x < obstacles[i].obj.x + 40 ) && ( fish.y > obstacles[i].obj.y - 30 ) && ( fish.y < obstacles[i].obj.y + 30 ) ) {
 					hit = true;
 					break;
 				}
@@ -579,12 +579,12 @@ NoClickDelay.prototype = {
 		if ( hit === true ) {
 			fishDead();
 		} else {
-			if ( stages[stage] == 'play' ) {
+			if ( stage == 'play' ) {
 				var i;
 				var ilen;
 				for ( i = 0, ilen = obstacles.length; i < ilen; i++ ) {
-					if ( ( obstacles[i]["v"] !== false ) && ( obstacles[i]["s"] === false ) && ( obstacles[i]["x"] < fishCircle["x"] ) ) {
-						obstacles[i]["s"] = true;
+					if ( ( obstacles[i].v !== false ) && ( obstacles[i].s === false ) && ( obstacles[i].x < fishCircle.x ) ) {
+						obstacles[i].s = true;
 						soundPlay('coin');
 						score++;
 					}
@@ -605,27 +605,27 @@ NoClickDelay.prototype = {
 			if ( -100 + fishAir + fishWater <= 0 ) {
 				var i;
 				for ( i = 0; i < 5; i++ ) {
-					health[i]["obj"].alpha = 0;
+					health[i].obj.alpha = 0;
 				}			
 
-				if ( stages[stage] == "play" ) {
+				if ( stage == "play" ) {
 					fishDead();
 				}
 			} else {
 				var i;
 				for ( i = 0; i < 5; i++ ) {
-					if ( ( stages[stage] != 'play' ) || ( ( ( -100 + fishAir + fishWater ) < 50 ) && ( Math.round(healthOffset / 5) % 2 == 0 ) ) ) {
-						health[i]["obj"].alpha = 0;
+					if ( ( stage != 'play' ) || ( ( ( -100 + fishAir + fishWater ) < 50 ) && ( Math.round(healthOffset / 5) % 2 == 0 ) ) ) {
+						health[i].obj.alpha = 0;
 					} else {
 						if ( ( -100 + fishAir + fishWater ) >= (i + 1) * 20 ) {
-							health[i]["obj"].alpha = 1;
+							health[i].obj.alpha = 1;
 						} else if ( ( -100 + fishAir + fishWater ) > i * 20 ) {
-							health[i]["obj"].alpha = (1 / 20) * (( -100 + fishAir + fishWater ) - (i * 20));
+							health[i].obj.alpha = (1 / 20) * (( -100 + fishAir + fishWater ) - (i * 20));
 						} else {
-							health[i]["obj"].alpha = 0;
+							health[i].obj.alpha = 0;
 						}
 					}
-					health[i]["obj"].y = health[i]["y"] + ( Math.sin(((Math.PI * 2) / 100) * ( healthOffset + (i * 20) )) * 5 );
+					health[i].obj.y = health[i].y + ( Math.sin(((Math.PI * 2) / 100) * ( healthOffset + (i * 20) )) * 5 );
 				}
 			}
 	}
@@ -633,39 +633,39 @@ NoClickDelay.prototype = {
 	
 	function fishUpdate() {
 
-		if ( stages[stage] != "dead" ) {
+		if ( stage != "dead" ) {
 
 			// check if we are above the water
-			if ( fish.y < ( globalHeight - waterDepth(fishCircle["x"]) ) ) {
+			if ( fish.y < ( globalHeight - waterDepth(fishCircle.x) ) ) {
 				if ( fishOutOfWater === false ) {
 					// we're jumping out
 					soundPlay('splash2');
 					// Compensate center so fish.y stays continuous as fishMultiply changes 1→2
-					fishCircle["y"] -= Math.round(Math.sin(((Math.PI * 2) / 80) * fishCircle["s"]) * fishCircle["r"]);
+					fishCircle.y -= Math.round(Math.sin(((Math.PI * 2) / 80) * fishCircle.s) * fishCircle.r);
 				}
 
 				fishOutOfWater = true;
 				fishMultiply = 2;
-				// fishCircle["s"] -= 3;
+				// fishCircle.s -= 3;
 			} else {
 				if ( fishOutOfWater === true ) {
 					// we're landing
 					soundPlay('splash');
 					// Compensate center so fish.y stays continuous as fishMultiply changes 2→1
-					fishCircle["y"] += Math.round(Math.sin(((Math.PI * 2) / 80) * fishCircle["s"]) * fishCircle["r"]);
+					fishCircle.y += Math.round(Math.sin(((Math.PI * 2) / 80) * fishCircle.s) * fishCircle.r);
 				}
 
 				fishOutOfWater = false;
 				fishMultiply = 1;
-				// fishCircle["s"] -= 3;
+				// fishCircle.s -= 3;
 			}
 		} else {
 			fishMultiply = 1;
 		}
 
-		if ( stages[stage] != "dead" ) {
+		if ( stage != "dead" ) {
 
-			if ( stages[stage] == "play" ) {
+			if ( stage == "play" ) {
 
 				if ( fishOutOfWater === true ) {
 
@@ -703,46 +703,46 @@ NoClickDelay.prototype = {
 
 
 			// the 19 thing is to prevent a bug where 20 may never be hit and therefore the fish will jump on its own
-			if ( ( fishOutOfWater === true ) || ( fishCircle["s"] == 19 ) ) {
-				fishCircle["s"] += 1;
+			if ( ( fishOutOfWater === true ) || ( fishCircle.s == 19 ) ) {
+				fishCircle.s += 1;
 			} else {
-				fishCircle["s"] += 2;
+				fishCircle.s += 2;
 			}
 
-			if ( fishCircle["s"] >= 80 ) {
-				fishCircle["s"] = 0;
-			} else if ( fishCircle["s"] === 20 ) {
+			if ( fishCircle.s >= 80 ) {
+				fishCircle.s = 0;
+			} else if ( fishCircle.s === 20 ) {
 				fishMultiply = 1;
 			}
 
 			if ( fishOutOfWater === false ) {
-				var h = waterDepth(fishCircle["x"]);
+				var h = waterDepth(fishCircle.x);
 				var i = 1;
 				var j = false;
 				while ( j === false ) {
 
 					// when fish is at the bottom of the sin curve
-					if ( fishCircle["s"] == 20 ) {
+					if ( fishCircle.s == 20 ) {
 						if ( i > 250 ) {
-							fishCircle["r"] = Math.round(Math.random()*25);
+							fishCircle.r = Math.round(Math.random()*25);
 						} else {
-							fishCircle["r"] = Math.round(Math.random()*40) + 10;
+							fishCircle.r = Math.round(Math.random()*40) + 10;
 						}
-						fishCircle["y"] = fish.y - fishCircle["r"];
+						fishCircle.y = fish.y - fishCircle.r;
 					// when fish is at the top of the sin curve
-					} else if ( fishCircle["s"] == 60 ) {
+					} else if ( fishCircle.s == 60 ) {
 						if ( i > 250 ) {
-							fishCircle["r"] = Math.round(Math.random()*25);
+							fishCircle.r = Math.round(Math.random()*25);
 						} else {
-							fishCircle["r"] = Math.round(Math.random()*50) + 10;
+							fishCircle.r = Math.round(Math.random()*50) + 10;
 						}
-						fishCircle["y"] = fish.y + fishCircle["r"];
+						fishCircle.y = fish.y + fishCircle.r;
 					}
 
 					if (
 						(
-							( fishCircle["y"] - fishCircle["r"] > ( globalHeight - (h + (globalWaveHeight / 2))) ) &&
-							( fishCircle["y"] + fishCircle["r"] < globalHeight )
+							( fishCircle.y - fishCircle.r > ( globalHeight - (h + (globalWaveHeight / 2))) ) &&
+							( fishCircle.y + fishCircle.r < globalHeight )
 						) ||
 						( i > 500 )
 					) {
@@ -756,16 +756,16 @@ NoClickDelay.prototype = {
 			}
 
 		} else {
-			if ( ( fishCircle["s"] <= 20 ) || ( fishCircle["s"] >= 60 ) ) {
-				fishCircle["s"] += 1;
-				if ( fishCircle["s"] >= 80 ) {
-					fishCircle["s"] = 0;
+			if ( ( fishCircle.s <= 20 ) || ( fishCircle.s >= 60 ) ) {
+				fishCircle.s += 1;
+				if ( fishCircle.s >= 80 ) {
+					fishCircle.s = 0;
 				}
 			}
 		}
 
-		fish.y = fishCircle["y"] + Math.round(Math.sin(((Math.PI * 2) / 80) * fishCircle["s"]) * (fishCircle["r"] * fishMultiply));
-		fish.rotation = Math.round((Math.sin(((Math.PI * 2) / 80) * fishCircle["s"] + 20) * 30) / 5) * 3;
+		fish.y = fishCircle.y + Math.round(Math.sin(((Math.PI * 2) / 80) * fishCircle.s) * (fishCircle.r * fishMultiply));
+		fish.rotation = Math.round((Math.sin(((Math.PI * 2) / 80) * fishCircle.s + 20) * 30) / 5) * 3;
 
 	}
 
@@ -773,11 +773,11 @@ NoClickDelay.prototype = {
 	// initiate a fishJump
 	function fishJump() {
 		// only work if the fish is in the water
-		if ( ( stages[stage] == "play" ) && ( fishOutOfWater == false ) ) {
+		if ( ( stage == "play" ) && ( fishOutOfWater == false ) ) {
 			soundPlay('swim');
-			fishCircle["s"] = 40;
-			fishCircle["r"] = 150;
-			fishCircle["y"] = fish.y;
+			fishCircle.s = 40;
+			fishCircle.r = 150;
+			fishCircle.y = fish.y;
 		}
 	}
 
@@ -785,9 +785,9 @@ NoClickDelay.prototype = {
 	function fishDead() {
 		fishAir = 0;
 		fishWater = 0;
-		fishCircle["r"] = globalHeight - fish.y;
-		fishCircle["s"] = 60;
-		fishCircle["y"] = globalHeight;
+		fishCircle.r = globalHeight - fish.y;
+		fishCircle.s = 60;
+		fishCircle.y = globalHeight;
 
 		soundPlay('gameover');
 		stageChange();
@@ -801,12 +801,12 @@ NoClickDelay.prototype = {
 	function stageChange() {
 
 		// move to the next stage
-		if ( stages[stage] == "dead" ) {
+		if ( stage == "dead" ) {
 
 			// check for any ongoing obstacles
 			var hit = false;
 			for ( i = 0; i < obstacles.length; i++ ) {
-				if ( obstacles[i]["v"] !== false ) {
+				if ( obstacles[i].v !== false ) {
 					hit = true;
 					break;
 				}
@@ -818,15 +818,15 @@ NoClickDelay.prototype = {
 				fishWater = 100;
 
 				// make fish drop from the top
-				fishCircle["s"] = 75;
-				fishCircle["y"] = 0;
-				fishCircle["r"] = globalHeight - (globalWaterDepth / 2);
+				fishCircle.s = 75;
+				fishCircle.y = 0;
+				fishCircle.r = globalHeight - (globalWaterDepth / 2);
 
 				fish.y = -1000;
 				fishOutOfWater = false;
 
 				// start the game stage
-				stage = 3;
+				stage = 'play';
 				score = 0;
 				obstacleStep = 0;
 
@@ -835,8 +835,8 @@ NoClickDelay.prototype = {
 			}
 
 		} else {
-			stage++;
-			if ( stages[stage] == "dead" ) {
+			stage = nextStage[stage];
+			if ( stage == "dead" ) {
 				adShow();
 			} else {
 				adHide();
@@ -882,7 +882,7 @@ this.myNameSpace = this.myNameSpace || {};
 			healthInit();
 
 			document.getElementById("globalCanvas").addEventListener("click", function(evt) {
-				if ( stages[stage] == "play" ) {
+				if ( stage == "play" ) {
 					fishJump();
 				} else {
 					stageChange();
